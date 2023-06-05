@@ -1,0 +1,41 @@
+---
+- name: Authentication API
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Log in to website
+      uri:
+        url: https://sandboxdnac.cisco.com/dna/system/api/v1/auth/token
+        method: POST
+        body: {}
+        headers:
+          Content-Type: application/json
+          Authorization: "Basic ZGV2bmV0dXNlcjpDaXNjbzEyMyE="
+        validate_certs: no
+      register: login_response
+
+    - name: Display login response
+      debug:
+        var: login_response.json
+
+
+    - name: Get Device Details
+      uri:
+        url: https://sandboxdnac.cisco.com/dna/intent/api/v1/network-device
+        method: GET
+        headers:
+          Content-Type: application/json
+          X-Auth-Token: "{{ login_response.json.Token }}"
+        validate_certs: no
+      register: device_details_response
+ 
+    - name: Parse Device Details
+      set_fact:
+        devices: "{{ device_details_response.json.response }}"
+
+    - name: Display device hostnames
+      debug:
+        msg: |
+          Device Count: {{ devices | length }}
+          Devices:{{ devices | json_query('[].{hostname: hostname, ip: managementIpAddress, platformId: platformId, series: series}') | to_nice_json }}
