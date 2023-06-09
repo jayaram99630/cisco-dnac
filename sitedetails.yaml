@@ -1,0 +1,36 @@
+---
+- name: Authentication API
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Log in to website
+      uri:
+        url: https://sandboxdnac.cisco.com/dna/system/api/v1/auth/token
+        method: POST
+        body: {}
+        headers:
+          Content-Type: application/json
+          Authorization: "Basic ZGV2bmV0dXNlcjpDaXNjbzEyMyE="
+        validate_certs: no
+      register: login_response
+
+    - name: Display login response
+      debug:
+        var: login_response.json
+
+
+    - name: Get Site Details
+      uri:
+        url: https://sandboxdnac.cisco.com/dna/intent/api/v1/site
+        method: GET
+        headers:
+          Content-Type: application/json
+          X-Auth-Token: "{{ login_response.json.Token }}"
+        validate_certs: no
+      register: site_details_response
+ 
+
+    - name: Print site details response
+      debug:
+        var: site_details_response.json
