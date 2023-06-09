@@ -15,9 +15,30 @@
         validate_certs: no
       register: login_response
 
+
     - name: Display login response
       debug:
         var: login_response.json
+
+    - name: Get Site Details
+      uri:
+        url: https://sandboxdnac.cisco.com/dna/intent/api/v1/site
+        method: GET
+        headers:
+          Content-Type: application/json
+          X-Auth-Token: "{{ login_response.json.Token }}"
+        validate_certs: no
+      register: site_details_response
+
+    - name: Extract site details
+      set_fact:
+        sites: "{{ site_details_response.json.response | json_query('[].{name: name, siteNameHierarchy: siteNameHierarchy}') }}"
+
+    - name: Print site details
+      debug:
+        msg: |
+          Site Count: {{ sites | length }}
+          Sites:{{ sites | to_nice_json }}
 
 
     - name: Get Device Details
