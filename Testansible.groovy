@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   parameters {
-    choice(name: 'List of Actions', choices: ['devices list', 'users list'], description: 'Select an action')
+    choice(name: 'List of Actions', choices: ['devices list', 'users list', 'site list'], description: 'Select an action')
   }
 
   stages {
@@ -10,7 +10,7 @@ pipeline {
       steps {
         sshagent(['sample']) {
           sh '''
-            ssh -o StrictHostKeyChecking=no ubuntu@13.53.52.161 "git clone https://github.com/jayaram99630/cisco-dnac.git"
+            ssh -o StrictHostKeyChecking=no ubuntu@16.170.233.169 "git clone https://github.com/jayaram99630/cisco-dnac.git"
           '''
         }
       }
@@ -30,13 +30,15 @@ pipeline {
             playbook = 'devicedetails.yaml'
           } else if (params['List of Actions'] == 'users list') {
             playbook = 'dnacuserlist.yaml'
+          } else if (params['List of Actions'] == 'site list') {
+            playbook = 'sitedetails.yaml'  
           } else {
             error('Invalid choice')
           }
 
           sshagent(['sample']) {
             sh """
-              ssh -o StrictHostKeyChecking=no ubuntu@13.53.52.161 "cd cisco-dnac && \
+              ssh -o StrictHostKeyChecking=no ubuntu@16.170.233.169 "cd cisco-dnac && \
               export ANSIBLE_STDOUT_CALLBACK=debug && \
               ansible-playbook ${playbook}"
             """
@@ -49,7 +51,7 @@ pipeline {
     always {
       sshagent(['sample']) {
         sh '''
-          ssh -o StrictHostKeyChecking=no ubuntu@13.53.52.161 "rm -rf /home/ubuntu/cisco-dnac"
+          ssh -o StrictHostKeyChecking=no ubuntu@16.170.233.169 "rm -rf /home/ubuntu/cisco-dnac"
         '''
       }
     }

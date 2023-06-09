@@ -3,7 +3,7 @@
   gather_facts: false
 
   tasks:
-    - name: Log in to website
+    - name: Logging into DNAC portal https://sandboxdnac.cisco.com/
       uri:
         url: https://sandboxdnac.cisco.com/dna/system/api/v1/auth/token
         method: POST
