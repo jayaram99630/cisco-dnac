@@ -30,7 +30,12 @@
         validate_certs: no
       register: site_details_response
  
+    - name: Extract site details
+      set_fact:
+        sites: "{{ site_details_response.json.response | json_query('[].{name: name, siteNameHierarchy: siteNameHierarchy}') }}"
 
-    - name: Print site details response
+    - name: Print site details
       debug:
-        var: site_details_response.json
+        msg: |
+          Site Count: {{ sites | length }}
+          Sites:{{ sites | to_nice_json }}
