@@ -1,6 +1,6 @@
 # Cisco DNAC
 
-#This project leverages Ansible playbooks to retrieve device, user, and site details from the Cisco DNA Center (DNAC) website.
+This project leverages Ansible playbooks to retrieve device, user, and site details from the Cisco DNA Center (DNAC) website.
 
 ## Table of Contents
 
