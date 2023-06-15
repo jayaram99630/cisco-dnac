@@ -4,7 +4,7 @@
     - credentials.yml
   gather_facts: false
   tasks:
-    - name: Get Network Device by id
+    - name: Get Network Device form DNAC host 
       cisco.dnac.network_device_info:
         dnac_host: "{{ dnac_host }}"
         dnac_username: "{{ dnac_username }}"
@@ -15,7 +15,7 @@
         dnac_debug: "{{ dnac_debug }}"
       register: network_device_result
 
-    - name: Get Count of Network Device
+    - name: Get Count of Network Device from DNAC host 
       cisco.dnac.network_device_count_info:
         dnac_host: "{{ dnac_host }}"
         dnac_username: "{{ dnac_username }}"
@@ -26,7 +26,7 @@
         dnac_debug: "{{ dnac_debug }}"
       register: device_count
 
-    - name: Get all sites info
+    - name: Get all sites info from DNAC host 
       cisco.dnac.site_info:
         dnac_host: "{{dnac_host}}"
         dnac_username: "{{dnac_username}}"
@@ -41,7 +41,7 @@
       ansible.builtin.debug:
         msg: "{{ result }}"
 
-    - name: Displaying network_device Using Id 
+    - name: Displaying network_device 
       ansible.builtin.debug:
         msg: "{{ network_device_result }}"
 
