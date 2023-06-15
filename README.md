@@ -23,14 +23,12 @@ To get started with Cisco DNAC, follow these steps:
 
 Install the Python DNA Center SDK:
 
-bash
-Copy code
+```bash
 sudo pip install dnacentersdk
 
 Install the Cisco DNAC Ansible collection:
 
-bash
-Copy code
+```bash
 ansible-galaxy collection install cisco.dnac
 
 Folders
