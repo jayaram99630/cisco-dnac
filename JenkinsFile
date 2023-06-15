@@ -1,0 +1,38 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Clone Code') {
+      steps {
+        sshagent(['sample']) {
+          sh '''
+            ssh -o StrictHostKeyChecking=no ubuntu@13.48.172.32 "git clone https://github.com/jayaram99630/cisco-dnac.git"
+          '''
+        }
+      }
+    }
+
+    stage('Execute Ansible Playbook') {
+      steps {
+        script {
+          sshagent(['sample']) {
+            sh """
+              ssh -o StrictHostKeyChecking=no ubuntu@13.48.172.32 "cd cisco-dnac/playbooks/ && \
+              export ANSIBLE_STDOUT_CALLBACK=debug && \
+              ansible-playbook -i hosts allplays.yaml"
+            """
+          }
+        }
+      }
+    }
+  }
+  post {
+    always {
+      sshagent(['sample']) {
+        sh '''
+          ssh -o StrictHostKeyChecking=no ubuntu@13.48.172.32 "rm -rf /home/ubuntu/cisco-dnac"
+        '''
+      }
+    }
+  }
+}
