@@ -13,7 +13,6 @@
         dnac_port: "{{ dnac_port }}"
         dnac_version: "{{ dnac_version }}"
         dnac_debug: "{{ dnac_debug }}"
-        id: 5f03d9a9-33df-450e-b0c3-6bcb5f721688
       register: network_device_result
 
     - name: Get Count of Network Device
