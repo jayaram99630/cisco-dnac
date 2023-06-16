@@ -4,17 +4,6 @@
     - credentials.yml
   gather_facts: false
   tasks:
-    - name: Get Network Device form DNAC host 
-      cisco.dnac.network_device_info:
-        dnac_host: "{{ dnac_host }}"
-        dnac_username: "{{ dnac_username }}"
-        dnac_password: "{{ dnac_password }}"
-        dnac_verify: "{{ dnac_verify }}"
-        dnac_port: "{{ dnac_port }}"
-        dnac_version: "{{ dnac_version }}"
-        dnac_debug: "{{ dnac_debug }}"
-      register: network_device_result
-
     - name: Get Count of Network Device from DNAC host 
       cisco.dnac.network_device_count_info:
         dnac_host: "{{ dnac_host }}"
@@ -26,6 +15,11 @@
         dnac_debug: "{{ dnac_debug }}"
       register: device_count
 
+    - name: Dispalying device count info ...
+      set_fact:
+        device_count: "{{ device_count.dnac_response.response }}"
+    - debug: var=device_count
+
     - name: Get all sites info from DNAC host 
       cisco.dnac.site_info:
         dnac_host: "{{dnac_host}}"
@@ -35,18 +29,26 @@
         dnac_port: "{{dnac_port}}"
         dnac_version: "{{dnac_version}}"
         dnac_debug: "{{dnac_debug}}"
-      register: result
+      register: siteresult
 
-    - name: Displaying  all sites info 
-      ansible.builtin.debug:
-        msg: "{{ result }}"
+    - name: Displaying sites info ...
+      set_fact:
+        sites: "{{  siteresult.dnac_response.response | flatten |map(attribute='name')  }}"
+    - debug: var=sites
 
-    - name: Displaying network_device 
-      ansible.builtin.debug:
-        msg: "{{ network_device_result }}"
+    - name: Get Network Device form DNAC host
+      cisco.dnac.network_device_info:
+        dnac_host: "{{ dnac_host }}"
+        dnac_username: "{{ dnac_username }}"
+        dnac_password: "{{ dnac_password }}"
+        dnac_verify: "{{ dnac_verify }}"
+        dnac_port: "{{ dnac_port }}"
+        dnac_version: "{{ dnac_version }}"
+        dnac_debug: "{{ dnac_debug }}"
+      register: network_device_result
 
-    - name: Displaying Total Count Of Devices 
-      ansible.builtin.debug:
-        msg: "{{ device_count }}"
-
+    - name: Displaying Devices info ...
+      set_fact:
+        devices: "{{network_device_result.dnac_response.response|json_query('[].{hostname:hostname,serialNumber:serialNumber,platformId:platformId,managementIpAddress:managementIpAddress,lineCardCount:lineCardCount,type:type}')}}"
+    - debug: var=devices
 
